@@ -69,7 +69,7 @@ public class ModelCheckFromFiles
 			prism.initialise();
 
 			// Parse and load a PRISM model from a file
-			ModulesFile modulesFile = prism.parseModelFile(new File("examples/dice.pm"));
+			ModulesFile modulesFile = prism.parseModelFile(new File("prism-examples/simple-DNA-stack/1.ls_p"));
 			prism.loadPRISMModel(modulesFile);
 
 			// Parse and load a properties model for the model

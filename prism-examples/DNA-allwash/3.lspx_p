@@ -1,0 +1,69 @@
+// DNA Stack model
+
+ctmc
+
+// Parameters for stochastic rate constants
+const double k_a = 0.2222e-5; 
+const double k_bc = 0.2222e-5; 
+const int N = 30;
+const double Inv = 18000/N;
+
+// Species linker - start
+module ls
+
+ls : [0..N] init 0;
+[ls_p] ls > 0 -> ls*Inv: (ls'=ls-1);
+
+endmodule
+
+// Species push
+module p 
+
+p : [0..N] init 0; 
+[lspx_p] p > 0 -> p*Inv: (p'=p-1);
+[ls_p] p > 0 -> p*Inv: (p'=p-1);
+
+endmodule
+
+
+// Species linker - start - push
+module lsp 
+
+lsp : [0..N] init 0;
+[ls_p] lsp < N -> 1 : (lsp'=lsp + 1);
+
+endmodule
+
+// Species dataX
+module x
+
+x : [0..N] init 0; 
+
+endmodule
+
+// Species linker - start - push - dataX
+module lspx
+
+lspx : [0..N] init 0;
+[lspx_p] lspx > 0 -> lspx*Inv : (lspx'=lspx - 1);
+
+endmodule
+
+
+// Species linker - start - push - dataX -push
+module lspxp
+
+lspxp : [0..N] init 0;
+[lspx_p] lspxp < N -> 1 : (lspxp'=lspxp + 1);
+
+endmodule
+
+// Reaction rates
+module reaction_rates
+
+// forwards
+[lspx_p] lspx*p > 0 -> k_a / Inv : true;
+[ls_p] ls*p > 0 -> k_a / Inv : true;
+
+endmodule
+
