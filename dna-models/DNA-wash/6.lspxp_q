@@ -1,0 +1,140 @@
+// DNA Stack model
+
+ctmc
+
+// Parameters for stochastic rate constants
+const double k_a = 0.2214e-5; 
+const double k_bc = 0.2214e-5; 
+const int N = 100;
+const double Inv = 27100/N;
+
+
+// Species start
+module s
+s : [0..N] init 0;
+endmodule
+
+
+// Species linker - start
+module ls
+ls : [0..N] init 0;
+// Reactant
+endmodule
+
+
+// Species push
+module p 
+p : [0..N] init 0; 
+endmodule
+
+
+// Species linker - start - push
+module lsp 
+lsp : [0..N] init 0;
+// Production
+[lspx_r] lsp < N -> 1 : (lsp'=lsp+1);
+endmodule
+
+
+// Species sigma polymer
+module SG 
+SG : [0..N] init 0;
+endmodule
+
+
+// Species dataX
+module x
+x : [0..N] init 0; 
+endmodule
+
+
+// Species linker - start - push - dataX
+module lspx
+lspx : [0..N] init 0;
+// Reactant
+[lspx_r] lspx > 0 -> lspx*Inv : (lspx'=lspx-1);
+// Production
+[lspxp_q] lspx < N -> 1 : (lspx'=lspx+1);
+endmodule
+
+
+
+// Species linker - start - push - dataX - push
+module lspxp
+lspxp : [0..N] init 0;
+// Reactant
+[lspxp_q] lspxp > 0 -> lspxp*Inv : (lspxp'=lspxp-1);
+endmodule
+
+
+// Species linker - start - sigma
+module lsSG
+lsSG : [0..N] init 0;
+endmodule
+
+// Species dataX
+module y
+y : [0..N] init 0; 
+endmodule
+
+
+// Species linker - start - push - dataX - push - dataY
+module lspxpy
+lspxpy : [0..N] init 0;
+endmodule
+
+
+// Species read
+module r
+r : [0..N] init 0;
+// Reactant
+[r_q] r > 0 -> r*Inv : (r'=r-1);
+[lspx_r] r > 0 -> r*Inv : (r'=r-1);
+endmodule
+
+
+// Species read - dataY
+module ry
+ry : [0..N] init 0;
+endmodule
+
+
+// Species read - dataX
+module rx
+rx : [0..N] init 0;
+// Production
+[lspx_r] rx < N -> 1 : (rx'=rx+1);
+endmodule
+
+// Species pop
+module q
+q : [0..N] init 0;
+// Reactant
+[r_q] q > 0 -> q*Inv : (q'=q-1);
+[lspxp_q] q > 0 -> q*Inv : (q'=q-1);
+endmodule
+
+
+// Species push - pop
+module pq
+pq : [0..N] init 0;
+// Production
+[lspxp_q] pq < N -> 1 : (pq'=pq+1);
+endmodule
+
+
+// Species polymer TAU
+module TAU
+TAU : [0..N] init 0;
+// Production
+[r_q] TAU < N -> 1 : (TAU'=TAU+1);
+endmodule
+
+
+// Reaction rates
+module reaction_rates
+[lspxp_q] lspxp*q > 0 -> k_a / Inv : true;
+[r_q] r*q > 0 -> k_a / Inv : true;
+[lspx_r] lspx*r>0 -> k_bc / Inv : true;
+endmodule
+

@@ -1,0 +1,137 @@
+// DNA Stack model
+
+ctmc
+
+// Parameters for stochastic rate constants
+const double k_a = 0.2214e-5; 
+const double k_bc = 0.2214e-5; 
+const int N = 50;
+const double Inv = 27100/N;
+
+
+// Species start
+module s
+s : [0..N] init 0;
+endmodule
+
+
+// Species linker - start
+module ls
+ls : [0..N] init 0;
+// Reactant
+endmodule
+
+
+// Species push
+module p 
+p : [0..N] init 0; 
+// Reactant
+[lspxpy_p] p > 0 -> p*Inv : (p'=p-1);
+[p_y] p > 0 -> p*Inv : (p'=p-1);
+[y_p] p > 0 -> p*Inv : (p'=p-1);
+[wSG_p] p > 0 -> p*Inv : (p'=p-1);
+endmodule
+
+
+// Species linker - start - push
+module lsp 
+lsp : [0..N] init 0;
+endmodule
+
+
+// Species dataX
+module x
+x : [0..N] init 0; 
+endmodule
+
+
+// Species linker - start - push - dataX
+module lspx
+lspx : [0..N] init 0;
+endmodule
+
+
+// Species linker - start - sigma polymer
+module lsSG
+lsSG : [0..N] init 0;
+// Reactant
+//[lsSG_y]  lsSG > 0 -> lsSG*Inv : (lsSG'=lsSG-1);
+// Production
+//[lspxpy_p] lsSG < N -> 1 : (lsSG'=lsSG+1);
+//[lspxp_wSG] lsSG < N -> 1 : (lsSG'=lsSG+1);
+//[lspxpy_pSG] lsSG < N -> 1 : (lsSG'=lsSG+1);
+endmodule
+
+
+// Species push-sigma polymer 
+module pSG 
+pSG : [0..N] init 0;
+// Reactant
+[pSG_y] pSG > 0 -> pSG*Inv : (pSG'=pSG-1);
+[lspxpy_pSG] pSG > 0 -> pSG*Inv : (pSG'=pSG-1);
+// Production
+[p_y] pSG < N -> 1 : (pSG'=pSG+1);
+[wSG_p] pSG < N -> 1 : (pSG'=pSG+1);
+endmodule
+
+
+// Species data-sigma polymer
+module wSG 
+wSG : [0..N] init 0;
+// Reactant
+[wSG_p] wSG > 0 -> wSG*Inv : (wSG'=wSG-1);
+[lspxpyp_wSG]  wSG > 0 -> wSG*Inv : (wSG'=wSG-1);	
+// Production
+[y_p] wSG < N -> 1 : (wSG'=wSG+1);
+[pSG_y] wSG < N -> 1 : (wSG'=wSG+1);
+endmodule
+
+
+// Species linker - start - push - dataX - push
+module lspxp
+lspxp : [0..N] init 0;
+endmodule
+
+
+// Species dataY
+module y
+y : [0..N] init 0; 
+// Reactant
+[p_y] y > 0 -> y*Inv : (y'=y-1);
+[y_p] y > 0 -> y*Inv : (y'=y-1);
+[pSG_y] y > 0 -> y*Inv : (y'=y-1);
+[lspxpyp_y] y > 0 -> y*Inv : (y'=y-1);
+endmodule
+
+
+// Species linker - start - push - dataX - push - dataY
+module lspxpy
+lspxpy : [0..N] init 0;
+// Reactant
+[lspxpy_p] lspxpy > 0 -> lspxpy*Inv : (lspxpy'=lspxpy-1);
+[lspxpy_pSG] lspxpy > 0 -> lspxpy*Inv : (lspxpy'=lspxpy-1);
+endmodule
+
+
+// Species linker - start - push - dataX - push - dataY - push
+module lspxpyp
+lspxpyp : [0..N] init 0;
+// Reactant
+[lspxpyp_y] lspxpyp> 0 -> lspxpyp*Inv : (lspxpyp'=lspxpyp-1);
+[lspxpyp_wSG] lspxpyp > 0 -> lspxpyp*Inv : (lspxpyp'=lspxpyp-1);
+// Production
+[lspxpy_p] lspxpyp < N -> 1 : (lspxpyp'=lspxpyp+1);
+endmodule
+
+// Reaction rates
+module reaction_rates
+[lspxpy_p] lspxpy*p>0 -> k_bc / Inv : true;
+[lspxpyp_y] lspxpyp*y > 0 -> k_a / Inv : true;
+[y_p] y*p > 0 -> k_a / Inv : true;
+[p_y] y*p > 0 -> k_a / Inv : true;
+[wSG_p] wSG*p > 0 -> k_bc / Inv : true; 
+[pSG_y] pSG*y > 0 -> k_bc / Inv : true; 
+[lspxpyp_wSG] lspxpyp*wSG > 0 -> k_bc / Inv : true;
+[lspxpy_pSG] lspxpy*pSG > 0 -> k_bc / Inv : true;
+endmodule
+

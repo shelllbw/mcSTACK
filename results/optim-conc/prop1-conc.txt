@@ -1,0 +1,16 @@
+P=?[ F[1800,1800] lsp >= 81 ]: 
+0.9903420905938332 (value in the initial state)
+P=?[ F[1800,1800] lspx >= 70 ]: 
+[0.9911448700711449,0.9999999948684047] (range of values over initial states)
+P=?[ F[1800,1800] lspxp >= 60 ]: 
+[0.9914480902656382,0.9999999999999677] (range of values over initial states)
+P=?[ F[1800,1800] lspxpy >= 54 ]: 
+[0.9944834104058733,0.9999999999999719] (range of values over initial states)
+P=?[ F[1800,1800] lspxp >= 49 ]: 
+[0.990418685184099,0.999999999999969] (range of values over initial states)
+P=?[ F[1800,1800] lspx >= 43 ]: 
+[0.9939792015175072,0.9999999999999867] (range of values over initial states)
+P=?[ F[1800,1800] lsp >= 38 ]: 
+[0.9949166038941989,0.9999999999999858] (range of values over initial states)
+P=?[ F[1800,1800] ls >= 33 ]: 
+[0.996326050079161,0.9999999999999921] (range of values over initial states)

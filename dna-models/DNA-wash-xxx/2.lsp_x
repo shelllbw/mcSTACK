@@ -1,0 +1,113 @@
+// DNA Stack model
+
+ctmc
+
+// Parameters for stochastic rate constants
+const double k_a = 0.2214e-5; 
+const double k_bc = 0.2214e-5; 
+const int N = 50;
+const double Inv = 27100/N;
+
+// Species start
+module s
+s : [0..N] init 0;
+endmodule
+
+
+// Species linker - start
+module ls
+ls : [0..N] init 0;
+endmodule
+
+
+// Species push
+module p 
+p : [0..N] init 0; 
+// Reactant
+[lspx_p] p > 0 -> p*Inv: (p'=p-1);
+[p_x] p > 0 -> p*Inv : (p'=p-1);
+[x_p] p > 0 -> p*Inv : (p'=p-1);
+[wSG_p] p > 0 -> p*Inv : (p'=p-1);
+endmodule
+
+
+// Species linker - start - push
+module lsp 
+lsp : [0..N] init 0;
+// Reactant
+[lsp_x] lsp > 0 -> lsp*Inv : (lsp'=lsp-1);
+[lsp_wSG] lsp > 0 -> lsp*Inv : (lsp'=lsp-1);
+endmodule
+
+
+// Species dataX
+module x
+x : [0..N] init 0; 
+// Reactant
+[p_x] x > 0 -> x*Inv : (x'=x-1);
+[x_p] x > 0 -> x*Inv : (x'=x-1);
+[lsp_x] x > 0 -> x*Inv : (x'=x-1);
+[pSG_x] x > 0 -> x*Inv : (x'=x-1);
+//[lsSG_x]  x > 0 -> x*Inv : (x'=x-1);
+endmodule
+
+
+// Species linker - start - push - dataX
+module lspx
+lspx : [0..N] init 0;
+// Reactant
+[lspx_p] lspx > 0 -> lspx*Inv : (lspx'=lspx-1);
+[lspx_pSG] lspx > 0 -> lspx*Inv : (lspx'=lspx-1);
+// Production
+[lsp_x] lspx < N -> 1 : (lspx'=lspx+1);
+endmodule
+
+
+// Species linker - start - push - dataX -push
+module lsSG
+lsSG : [0..N] init 0;
+// Reactant
+//[lsSG_x] lsSG > 0 -> lsSG*Inv : (lsSG'=lsSG-1);
+// Production
+//[lspx_p] lsSG < N -> 1 : (lsSG'=lsSG+1);
+//[lspx_pSG] lsSG < N -> 1 : (lsSG'=lsSG+1);
+//[lsp_wSG] lsSG < N -> 1 : (lsSG'=lsSG+1);
+//[lsSG_x] lsSG < N -> 1 : (lsSG'=lsSG+1);
+endmodule
+
+
+// Species push-sigma polymer 
+module pSG 
+pSG : [0..N] init 0;
+// Reactant
+[pSG_x] pSG > 0 -> pSG*Inv : (pSG'=pSG-1);
+[lspx_pSG] pSG > 0 -> pSG*Inv : (pSG'=pSG-1);
+// Production
+[p_x] pSG < N -> 1 : (pSG'=pSG+1);
+[wSG_p] pSG < N -> 1 : (pSG'=pSG+1);
+endmodule
+
+// Species data-sigma polymer
+module wSG 
+wSG : [0..N] init 0;
+// Reactant
+[wSG_p] wSG > 0 -> wSG*Inv : (wSG'=wSG-1);
+[lsp_wSG]  wSG > 0 -> wSG*Inv : (wSG'=wSG-1);	
+// Production
+[x_p] wSG < N -> 1 : (wSG'=wSG+1);
+[pSG_x] wSG < N -> 1 : (wSG'=wSG+1);
+endmodule
+
+
+// Reaction rates
+module reaction_rates
+[lsp_x] lsp*x > 0 -> k_bc / Inv : true;
+[lspx_p] lspx*p > 0 -> k_a / Inv : true;
+[p_x] x*p > 0 -> k_a / Inv : true;
+[x_p] x*p > 0 -> k_a / Inv : true;
+[wSG_p] wSG*p > 0 -> k_bc / Inv : true; 
+[pSG_x] pSG*x > 0 -> k_bc / Inv : true; 
+[lspx_pSG] lspx*pSG > 0 -> k_bc / Inv : true;
+[lsp_wSG] lsp*wSG > 0 -> k_bc / Inv : true;
+//[lsSG_x] lsSG*x > 0 -> k_bc / Inv : true;
+endmodule

@@ -1,0 +1,16 @@
+P=?[ G>=300 ls = 0 ]: 
+0.7092929068630461 (value in the initial state)
+P=?[ G>=300 lsp = 0 & p = 0 & pSG = 0 ]: 
+0.9083411506984813 (value in the initial state)
+P=?[ G>=300 lspx = 0 & x = 0 & wSG = 0 ]: 
+[0.9703199627859038,0.9817416459962834] (range of values over initial states)
+P=?[ G>=300 lspxp = 0 & p = 0 & pSG = 0 ]: 
+[0.9891299069474799,0.9973092737983628] (range of values over initial states)
+P=?[ G>=300 lspxpy = 0 & y = 0 ]: 
+[0.9932696654667296,0.9992085605492061] (range of values over initial states)
+P=?[ G>=300 lspxp = 0 & r = 0 & TAUr = 0 ]: 
+[0.99827909814857,0.9998182137347258] (range of values over initial states)
+P=?[ G>=300 lspx = 0 & q = 0 & TAUq = 0 ]: 
+[0.9994782759993819,0.999976073424943] (range of values over initial states)
+P=?[ G>=300 lsp = 0 ]: 
+[0.9997424674752337,0.9999946673168492] (range of values over initial states)

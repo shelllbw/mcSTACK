@@ -1,0 +1,24 @@
+P=?[ G[600,1800] ls = 0]: 
+0.9876870741331267 (value in the initial state)
+P=?[ G[600,1800] lsp = 0 & p = 0 & pSG = 0 ]: 
+0.9990954374993273 (value in the initial state)
+P=?[ G[600,1800] lspx = 0 & x = 0 & wSG = 0  ]: 
+[0.9999155996203215,0.9999704745930087] (range of values over initial states)
+P=?[ G[600,1800] lspxp = 0 & p = 0 & pSG = 0 ]: 
+[0.9999894443090909,0.9999993766883516] (range of values over initial states)
+P=?[ G[600,1800] lspxpy = 0 & y = 0 & wSG = 0 ]: 
+[0.9999990869558701,0.9999999879563449] (range of values over initial states)
+P=?[ G[600,1800] lspxpyp = 0 & p = 0 & pSG = 0 ]: 
+[0.9999998932948989,0.9999999995575366] (range of values over initial states)
+P=?[ G[600,1800] lspxpypz = 0 & z = 0 ]: 
+[0.9999999770244214,0.999999999871548] (range of values over initial states)
+P=?[ G[600,1800] lspxpyp = 0 & r = 0 & TAUr = 0 ]: 
+[0.999999998595339,0.9999999999775996] (range of values over initial states)
+P=?[ G[600,1800] lspxpy = 0 & q = 0 & TAUq = 0 ]: 
+[0.9999999996820012,0.999999999998638] (range of values over initial states)
+P=?[ G[600,1800] lspxp = 0 & r = 0 & TAUr = 0 ]: 
+[0.9999999999306912,0.999999999999705] (range of values over initial states)
+P=?[ G[600,1800] lspx = 0 & q = 0 & TAUq = 0 ]: 
+[0.9999999999799002,0.9999999999998498] (range of values over initial states)
+P=?[ G[600,1800] lsp = 0 ]: 
+[0.9999999999904332,0.9999999999999849] (range of values over initial states)

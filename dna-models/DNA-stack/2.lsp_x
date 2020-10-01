@@ -1,0 +1,232 @@
+// DNA Stack model
+
+ctmc
+
+// Parameters for stochastic rate constants
+const double k_a = 0.2222e-5; 
+const double k_bc = 0.2222e-5; 
+const int N = 2;
+const double Inv = 18000/N;
+const double Inv_max = 18000/N;
+
+
+// Species linker - start - push
+module lsp 
+
+lsp : [0..N] init 1;
+[lsp_x] lsp > 0 -> lsp*Inv_max: (lsp'=lsp-1);
+
+endmodule
+
+
+// Species push
+module p 
+
+p : [0..N] init 0; 
+
+[x_p] p > 0 -> p*Inv: (p'=p-1);
+[p_x] p > 0 -> p*Inv: (p'=p-1);
+[lspx_p] p > 0 -> p*Inv: (p'=p-1);
+[pSGw_p] p > 0 -> p*Inv: (p'=p-1);
+[wSGp_p] p > 0 -> p*Inv: (p'=p-1);
+[wSGw_p] p > 0 -> p*Inv: (p'=p-1);
+[p_wSGw] p > 0 -> p*Inv: (p'=p-1);
+[lspSGw_p] p > 0 -> p*Inv: (p'=p-1);
+
+endmodule
+
+
+// Species data x
+module x
+
+x : [0..N] init 1;
+
+[lsp_x] x > 0 -> x*Inv_max: (x'=x-1);
+[x_p] x > 0 -> x*Inv_max: (x'=x-1);
+[p_x] x > 0 -> x*Inv_max: (x'=x-1);
+[pSGw_x] x > 0 -> x*Inv_max: (x'=x-1);
+[wSGp_x] x > 0 -> x*Inv_max: (x'=x-1);
+[pSGp_x] x > 0 -> x*Inv_max: (x'=x-1);
+[x_pSGp] x > 0 -> x*Inv_max: (x'=x-1);
+[lspSGp_x] x > 0 -> x*Inv_max: (x'=x-1);
+
+endmodule
+
+// Species push - sigma polymer - data 
+module pSGw
+
+pSGw: [0..N] init 0;
+
+// reactant
+[lspx_pSGw] pSGw > 0 -> pSGw*Inv: (pSGw'=pSGw-1);
+[pSGw_x] pSGw > 0 -> pSGw*Inv: (pSGw'=pSGw-1);
+[pSGw_p] pSGw > 0 -> pSGw*Inv: (pSGw'=pSGw-1);
+[pSGw_pSGw] pSGw > 1 -> pSGw*Inv: (pSGw'=pSGw-2);
+[wSGw_pSGw] pSGw > 0 -> pSGw*Inv: (pSGw'=pSGw-1);
+[pSGp_pSGw] pSGw > 0 -> pSGw*Inv: (pSGw'=pSGw-1);
+[lspSGw_pSGw] pSGw > 0 -> pSGw*Inv: (pSGw'=pSGw-1);
+
+// production
+[p_x] pSGw < N -> 1: (pSGw'=pSGw+1);
+[pSGw_pSGw] pSGw < N -> 1: (pSGw'=pSGw+1);
+[p_wSGw] pSGw < N -> 1: (pSGw'=pSGw+1);
+[pSGp_wSGw] pSGw < N -> 1: (pSGw'=pSGw+1);
+[pSGp_x] pSGw < N -> 1: (pSGw'=pSGw+1);
+
+endmodule
+
+// Species data - sigma polymer - push 
+module wSGp
+
+wSGp: [0..N] init 0;
+
+// reactant
+[wSGp_x] wSGp > 0 -> wSGp*Inv: (wSGp'=wSGp-1);
+[wSGp_p] wSGp > 0 -> wSGp*Inv: (wSGp'=wSGp-1);
+[wSGp_wSGp] wSGp > 1 -> wSGp*Inv: (wSGp'=wSGp-2);
+[wSGw_wSGp] wSGp > 0 -> wSGp*Inv: (wSGp'=wSGp-1);
+[pSGp_wSGp] wSGp > 0 -> wSGp*Inv: (wSGp'=wSGp-1);
+[lspSGp_wSGp] wSGp > 0 -> wSGp*Inv: (wSGp'=wSGp-1);
+
+// production
+[x_p] wSGp < N -> 1: (wSGp'=wSGp+1);
+[wSGp_wSGp] wSGp < N -> 1: (wSGp'=wSGp+1);
+[wSGw_p] wSGp < N -> 1: (wSGp'=wSGp+1);
+[wSGw_pSGp] wSGp < N -> 1: (wSGp'=wSGp+1);
+[x_pSGp] wSGp < N -> 1: (wSGp'=wSGp+1);
+
+endmodule
+
+// Species push - sigma polymer - push 
+module pSGp
+
+pSGp: [0..N] init 0;
+
+// reactant
+[wSGw_pSGp] pSGp > 0 -> pSGp*Inv: (pSGp'=pSGp-1);
+[pSGp_wSGw] pSGp > 0 -> pSGp*Inv: (pSGp'=pSGp-1);
+[pSGp_x] pSGp > 0 -> pSGp*Inv: (pSGp'=pSGp-1);
+[x_pSGp] pSGp > 0 -> pSGp*Inv: (pSGp'=pSGp-1);
+[pSGp_pSGw] pSGp > 0 -> pSGp*Inv: (pSGp'=pSGp-1);
+[pSGp_wSGp] pSGp > 0 -> pSGp*Inv: (pSGp'=pSGp-1);
+[lspSGw_pSGp] pSGp > 0 -> pSGp*Inv: (pSGp'=pSGp-1);
+
+// production
+[pSGw_p] pSGp < N -> 1: (pSGp'=pSGp+1);
+[wSGp_p] pSGp < N -> 1: (pSGp'=pSGp+1);
+[pSGp_pSGw] pSGp < N -> 1: (pSGp'=pSGp+1);
+[pSGp_wSGp] pSGp < N -> 1: (pSGp'=pSGp+1);
+
+endmodule
+
+// Species data - sigma polymer - data 
+module wSGw
+
+wSGw: [0..N] init 0;
+
+// reactant
+[wSGw_p] wSGw > 0 -> wSGw*Inv: (wSGw'=wSGw-1);
+[p_wSGw] wSGw > 0 -> wSGw*Inv: (wSGw'=wSGw-1);
+[wSGw_pSGw] wSGw > 0 -> wSGw*Inv: (wSGw'=wSGw-1);
+[wSGw_wSGp] wSGw > 0 -> wSGw*Inv: (wSGw'=wSGw-1);
+[wSGw_pSGp] wSGw > 0 -> wSGw*Inv: (wSGw'=wSGw-1);
+[pSGp_wSGw] wSGw > 0 -> wSGw*Inv: (wSGw'=wSGw-1);
+[lspSGp_wSGw] wSGw > 0 -> wSGw*Inv: (wSGw'=wSGw-1);
+
+// production
+[pSGw_x] wSGw < N -> 1: (wSGw'=wSGw+1);
+[wSGp_x] wSGw < N -> 1: (wSGw'=wSGw+1);
+[wSGw_pSGw] wSGw < N -> 1: (wSGw'=wSGw+1);
+[wSGw_wSGp] wSGw < N -> 1: (wSGw'=wSGw+1);
+
+endmodule
+
+// Species linker - start - push - sigma polymer - push 
+module lspSGp
+
+lspSGp: [0..N] init 0;
+
+// reactant
+[lspSGp_x] lspSGp > 0 -> lspSGp*Inv: (lspSGp'=lspSGp-1);
+[lspSGp_wSGp] lspSGp > 0 -> lspSGp*Inv: (lspSGp'=lspSGp-1);
+[lspSGp_wSGw] lspSGp > 0 -> lspSGp*Inv: (lspSGp'=lspSGp-1);
+
+// production
+[lspx_p] lspSGp < N -> 1: (lspSGp'=lspSGp+1);
+[lspSGp_wSGp] lspSGp < N -> 1: (lspSGp'=lspSGp+1);
+[lspSGw_p] lspSGp < N -> 1: (lspSGp'=lspSGp+1);
+[lspSGw_pSGp] lspSGp < N -> 1: (lspSGp'=lspSGp+1);
+
+endmodule
+
+// Species linker - start - push - sigma polymer - data 
+module lspSGw
+
+lspSGw: [0..N] init 0;
+
+
+// reactant
+[lspSGw_p] lspSGw > 0 -> lspSGw*Inv: (lspSGw'=lspSGw-1);
+[lspSGw_pSGw] lspSGw > 0 -> lspSGw*Inv: (lspSGw'=lspSGw-1);
+[lspSGw_pSGp] lspSGw > 0 -> lspSGw*Inv: (lspSGw'=lspSGw-1);
+
+// production
+[lspx_pSGw] lspSGw < N -> 1: (lspSGw'=lspSGw+1);
+[lspSGp_x] lspSGw < N -> 1: (lspSGw'=lspSGw+1);
+[lspSGw_pSGw] lspSGw < N -> 1: (lspSGw'=lspSGw+1);
+[lspSGp_wSGw] lspSGw < N -> 1: (lspSGw'=lspSGw+1);
+
+
+endmodule
+
+// Target Species linker - start - push - data 
+module lspx
+
+lspx: [0..N] init 0;
+
+// reactant
+[lspx_p] lspx > 0 -> lspx*Inv: (lspx'=lspx-1);
+[lspx_pSGw] lspx > 0 -> lspx*Inv: (lspx'=lspx-1);
+
+// production
+[lsp_x] lspx < N -> 1: (lspx'=lspx+1);
+
+endmodule
+
+
+// Reaction rates
+module reaction_rates
+
+// forwards
+[lsp_x] lsp*x > 0 -> k_a / Inv_max : true;
+[p_x] p*x>0 -> k_a / Inv_max : true;
+[x_p] x*p>0 -> k_a / Inv_max : true;
+
+[lspx_p] lspx*p>0 -> k_a / Inv_max : true;
+[lspx_pSGw] lspx_pSGw > 0 -> k_a / Inv_max : true;
+[pSGw_x] true -> k_a / Inv_max : true;
+[pSGw_pSGw] true -> k_a / Inv_max: true;
+[pSGw_p] true -> k_a / Inv_max : true;
+[wSGp_x] true -> k_a / Inv_max : true;
+[wSGp_p] true -> k_a / Inv_max : true;
+[wSGp_wSGp] true -> k_a / Inv_max : true;
+
+[wSGw_p] true -> k_a / Inv_max : true;
+[p_wSGw] true -> k_a / Inv_max : true;
+[wSGw_pSGw] true -> k_a / Inv_max : true;
+[wSGw_wSGp] true -> k_a / Inv_max: true;
+[wSGw_pSGp] true -> k_a / Inv_max : true;
+[pSGp_wSGw] true -> k_a / Inv_max : true;
+[pSGp_x] true -> k_a / Inv_max : true;
+[x_pSGp] true -> k_a / Inv_max : true;
+[pSGp_pSGw] true -> k_a / Inv_max : true;
+[pSGp_wSGp] true -> k_a / Inv_max : true;
+[lspSGp_x] true -> k_a / Inv_max : true;
+[lspSGp_wSGp] true -> k_a / Inv_max : true;
+[lspSGp_wSGw] true -> k_a / Inv_max : true;
+[lspSGw_p] true -> k_a / Inv_max : true;
+[lspSGw_pSGw] true -> k_a / Inv_max : true;
+[lspSGw_pSGp] true -> k_a / Inv_max : true;
+
+endmodule
+
