@@ -18,8 +18,12 @@ endmodule
 // Species linker - start
 module ls
 ls : [0..N] init 0;
+//Reactant
+//[ls_r] ls > 0 -> ls*Inv : (ls'=ls-1);
+//[ls_TAUr] ls > 0 -> ls*Inv : (ls'=ls-1);
 // Production
 [lsp_q] ls < N -> 1 : (ls'=ls+1);
+//[lsp_TAUq] ls < N -> 1 : (ls'=ls+1);
 endmodule
 
 
@@ -34,7 +38,7 @@ module lsp
 lsp : [0..N] init 0;
 // Reactant
 [lsp_q] lsp > 0 -> lsp*Inv : (lsp'=lsp-1);
-[lsp_TAUq] lsp > 0 -> lsp*Inv : (lsp'=lsp-1);
+//[lsp_TAUq] lsp > 0 -> lsp*Inv : (lsp'=lsp-1);
 endmodule
 
 
@@ -53,7 +57,6 @@ endmodule
 // Species linker - start - sigma polymer
 module lsSG
 lsSG : [0..N] init 0;
-//[lsp_TAUq] lsSG < N -> 1 : (lsSG'=lsSG+1);
 endmodule
 
 
@@ -94,6 +97,7 @@ r : [0..N] init 0;
 [r_q] r > 0 -> r*Inv : (r'=r-1);
 [q_r] r > 0 -> r*Inv : (r'=r-1);
 [TAUq_r] r > 0 -> r*Inv : (r'=r-1);
+//[ls_r] r > 0 -> r*Inv : (r'=r-1);
 endmodule
 
 
@@ -124,7 +128,6 @@ module pq
 pq : [0..N] init 0;
 // Production
 //[lsp_q] pq < N -> 1 : (pq'=pq+1);
-//[lsp_TAUq] pq < N -> 1 : (pq'=pq+1);
 endmodule
 
 
@@ -133,6 +136,7 @@ module TAUr
 TAUr : [0..N] init 0;
 // Reactant
 [TAUr_q] TAUr > 0 -> TAUr*Inv : (TAUr'=TAUr-1);
+//[ls_TAUr]  TAUr > 0 -> TAUr*Inv : (TAUr'=TAUr-1);
 // Production
 [q_r] TAUr < N -> 1 : (TAUr'=TAUr+1);
 [TAUq_r] TAUr < N -> 1 : (TAUr'=TAUr+1);
@@ -143,8 +147,8 @@ endmodule
 module TAUq
 TAUq : [0..N] init 0;
 // Reactant
-[lsp_TAUq] TAUq > 0 -> TAUq*Inv : (TAUq'=TAUq-1);
 [TAUq_r] TAUq > 0 -> TAUq*Inv : (TAUq'=TAUq-1);
+//[lsp_TAUq] TAUq > 0 -> TAUq*Inv : (TAUq'=TAUq-1);
 // Production
 [r_q] TAUq < N -> 1 : (TAUq'=TAUq+1);
 [TAUr_q] TAUq < N -> 1 : (TAUq'=TAUq+1);
@@ -156,8 +160,10 @@ module reaction_rates
 [lsp_q] lsp*q>0 -> k_bc / Inv : true;
 [r_q] r*q > 0 -> k_a / Inv : true;
 [q_r] r*q > 0 -> k_a / Inv : true;
-[lsp_TAUq] lsp*TAUq > 0 -> k_a / Inv : true;
 [TAUr_q] TAUr*q > 0 -> k_a / Inv : true;
 [TAUq_r] TAUq*r > 0 -> k_a / Inv : true;
+//[ls_r] ls*r > 0 -> k_a / Inv : true;
+//[ls_TAUr] ls*TAUr > 0 -> k_a / Inv : true;
+//[lsp_TAUq] lsp*TAUq > 0 -> k_a / Inv : true;
 endmodule
 

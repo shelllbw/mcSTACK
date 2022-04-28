@@ -61,12 +61,12 @@ import dna.StateValueInitEditorExpl;
  * 
  * See the README for how to link this to PRISM.
 */
-public class DNAStackModelCheckExpl2Sig
+public class DNAStackModelCheckExpl2Sig2old
 {
 
 	public static void main(String[] args)
 	{
-		new DNAStackModelCheckExpl2Sig().run();
+		new DNAStackModelCheckExpl2Sig2old().run();
 	}
 
 	public void run()
@@ -110,11 +110,11 @@ public class DNAStackModelCheckExpl2Sig
 
 		
 ////-------------------------add more species (dna-wash-full)-----------------------------------//		
-//   //  	 add x, lspx, pSG, wSG, 
+//   //  	 add x, lspx, lsSG, pSG, wSG, 
 		int np=100;
 		newModels.add("2.lsp_x");
-		newValues.add(new int[]{nParticles, 0, 0, 0});
-		numNewValue[0] = 4;
+		newValues.add(new int[]{nParticles, 0, 0, 0, 0});
+		numNewValue[0] = 5;
 		newAdding[0] = 'x';
 		targetSpec.add("lsp");
 		nonSpec.add("null");
@@ -137,11 +137,11 @@ public class DNAStackModelCheckExpl2Sig
 		targetSpec.add("lspxp");
 		nonSpec.add("pSG");
 		varNParticle[2] = nParticles;
-		// add r
+		// add r, ry
 		int np4=100;
 		newModels.add("5.lspxpy_r");
-		newValues.add(new int[]{nParticles});
-		numNewValue[3] = 1;
+		newValues.add(new int[]{nParticles, 0});
+		numNewValue[3] = 2;
 		newAdding[3] = 'r';
 		targetSpec.add("lspxpy");
 		nonSpec.add("wSG");
@@ -220,7 +220,7 @@ public class DNAStackModelCheckExpl2Sig
 			prism.setEngine(prism.EXPLICIT);		
 			prism.initialise();
 			
-			ModulesFile modulesFile = prism.parseModelFile(new File("dna-models/DNA-refine-xy/1.ls_p"));
+			ModulesFile modulesFile = prism.parseModelFile(new File("dna-models/DNA-wash-full/1.ls_p"));
 			// Parse and load a PRISM model from a file
 			prism.loadPRISMModel(modulesFile);
 			// Build CTMC model
@@ -271,7 +271,7 @@ public class DNAStackModelCheckExpl2Sig
 				System.out.println();
 				System.out.println("Total Probability: " + totalProb + "%");
 				
-				String model = "dna-models/DNA-refine-xy/" + newModels.get(i);
+				String model = "dna-models/DNA-wash-full/" + newModels.get(i);
 				ModulesFile newModulesFile = prism.parseModelFile(new File(model));
 				DNAModulesFileModelGenerator modelGen = new DNAModulesFileModelGenerator(newModulesFile, prism, initialStates);
 				

@@ -65,9 +65,9 @@ lsSG : [0..N] init 0;
 // Reactant
 //[lsSG_p] lsSG > 0 -> lsSG*Inv : (lsSG'=lsSG-1);
 // Production
-[lspxp_x] lsSG < N -> 1 : (lsSG'=lsSG+1);
-[lspx_pSG] lsSG < N -> 1 : (lsSG'=lsSG+1);
-[lspxp_wSG] lsSG < N -> 1 : (lsSG'=lsSG+1);
+//[lspxp_x] lsSG < N -> 1 : (lsSG'=lsSG+1);
+//[lspx_pSG] lsSG < N -> 1 : (lsSG'=lsSG+1);
+//[lspxp_wSG] lsSG < N -> 1 : (lsSG'=lsSG+1);
 endmodule
 
 

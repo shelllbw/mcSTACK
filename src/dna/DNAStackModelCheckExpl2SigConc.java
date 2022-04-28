@@ -80,7 +80,7 @@ public class DNAStackModelCheckExpl2SigConc
 		int nParticles = 100;
 		// % loss of bead and supernatant
 		double mu = 0.1;
-		double pi = 0.2;
+		double pi = 0.33;
 		double prob = 0.00001;
 		//double prob = 0.0005;
 		FileWriter myWriter = null;

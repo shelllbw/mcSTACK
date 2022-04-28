@@ -1,22 +1,21 @@
 // DNA Stack model
 ctmc
 const double k_a = 0.2214e-5; 
-const int N = 100;
+const int N = 50;
 const double Inv = 27100/N;
 // Species start
 module s
-//0.1=1 0.2=1
 s : [0..N] init 1;
 [s_p] s > 0 -> s*Inv: (s'=s-1);	
 endmodule
 // Species linker - start
 module ls
-ls : [0..N] init 81;
+ls : [0..N] init 40;
 [ls_p] ls > 0 -> ls*Inv: (ls'=ls-1);
 endmodule
 // Species push
 module p 
-p : [0..N] init 100; 
+p : [0..N] init 50; 
 [ls_p] p > 0 -> p*Inv: (p'=p-1);
 [s_p] p > 0 -> p*Inv: (p'=p-1);
 endmodule

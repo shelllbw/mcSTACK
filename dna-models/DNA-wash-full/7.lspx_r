@@ -18,8 +18,11 @@ endmodule
 // Species linker - start
 module ls
 ls : [0..N] init 0;
+//Reactant
+//[ls_r] ls > 0 -> ls*Inv : (ls'=ls-1);
 // Production
-[lsp_q] ls < N -> 1 : (ls'=ls+1);
+//[lsp_q] ls < N -> 1 : (ls'=ls+1);
+//[lspx_TAUr] ls < N -> 1 : (ls'=ls+1);
 endmodule
 
 
@@ -60,7 +63,6 @@ module lsSG
 lsSG : [0..N] init 0;
 // Production
 //[lspx_TAUr] lsSG < N -> 1 : (lsSG'=lsSG+1);
-//[lsp_TAUq] lsSG < N -> 1 : (lsSG'=lsSG+1);
 endmodule
 
 
@@ -102,6 +104,7 @@ r : [0..N] init 0;
 [r_q] r > 0 -> r*Inv : (r'=r-1);
 [q_r] r > 0 -> r*Inv : (r'=r-1);
 [TAUq_r] r > 0 -> r*Inv : (r'=r-1);
+//[ls_r] r > 0 -> r*Inv : (r'=r-1);
 endmodule
 
 
@@ -136,7 +139,6 @@ pq : [0..N] init 0;
 // Production
 //[lsp_q] pq < N -> 1 : (pq'=pq+1);
 //[lspx_TAUr] pq < N -> 1 : (pq'=pq+1);
-//[lsp_TAUq] pq < N -> 1 : (pq'=pq+1);
 endmodule
 
 
@@ -172,7 +174,8 @@ module reaction_rates
 [q_r] r*q > 0 -> k_a / Inv : true;
 [TAUr_q] TAUr*q > 0 -> k_a / Inv : true;
 [TAUq_r] TAUq*r > 0 -> k_a / Inv : true;
-[lspx_TAUr] lspx*TAUr > 0 -> k_a / Inv : true;
+//[ls_r] ls*r > 0 -> k_a / Inv : true;
 [lsp_TAUq] lsp*TAUq > 0 -> k_a / Inv : true;
+[lspx_TAUr] lspx*TAUr > 0 -> k_a / Inv : true;
 endmodule
 

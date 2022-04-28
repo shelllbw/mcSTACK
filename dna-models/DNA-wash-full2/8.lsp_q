@@ -5,7 +5,7 @@ ctmc
 // Parameters for stochastic rate constants
 const double k_a = 0.2214e-5; 
 const double k_bc = 0.2214e-5; 
-const int N = 100;
+const int N = 50;
 const double Inv = 27100/N;
 
 
@@ -18,9 +18,8 @@ endmodule
 // Species linker - start
 module ls
 ls : [0..N] init 0;
-//Production
-//[lsp_q] ls < N -> 1 : (ls'=ls+1);
-//[lspx_TAUr] ls < N -> 1 : (ls'=ls+1);
+// Production
+[lsp_q] ls < N -> 1 : (ls'=ls+1);
 endmodule
 
 
@@ -33,10 +32,8 @@ endmodule
 // Species linker - start - push
 module lsp 
 lsp : [0..N] init 0;
-//[lsp_q] lsp > 0 -> lsp*Inv : (lsp'=lsp-1);
-// Production
-//[lspx_r] lsp < N -> 1 : (lsp'=lsp+1);
-[lspxp_TAUq] lsp < N -> 1 : (lsp'=lsp+1);
+// Reactant
+[lsp_q] lsp > 0 -> lsp*Inv : (lsp'=lsp-1);
 endmodule
 
 
@@ -49,18 +46,12 @@ endmodule
 // Species linker - start - push - dataX
 module lspx
 lspx : [0..N] init 0;
-// Reactant
-[lspx_r] lspx > 0 -> lspx*Inv : (lspx'=lspx-1);
-[lspx_TAUr] lspx > 0 -> lspx*Inv : (lspx'=lspx-1);
-// Production
-[lspxp_q] lspx < N -> 1 : (lspx'=lspx+1);
 endmodule
 
 
 // Species linker - start - sigma polymer
 module lsSG
 lsSG : [0..N] init 0;
-// Production
 endmodule
 
 
@@ -79,9 +70,6 @@ endmodule
 // Species linker - start - push - dataX - push
 module lspxp
 lspxp : [0..N] init 0;
-// Reactant
-[lspxp_q] lspxp > 0 -> lspxp*Inv : (lspxp'=lspxp-1);
-[lspxp_TAUq] lspxp > 0 -> lspxp*Inv : (lspxp'=lspxp-1);
 endmodule
 
 
@@ -101,10 +89,8 @@ endmodule
 module r
 r : [0..N] init 0;
 // Reactant
-[lspx_r] r > 0 -> r*Inv : (r'=r-1);
 [r_q] r > 0 -> r*Inv : (r'=r-1);
 [q_r] r > 0 -> r*Inv : (r'=r-1);
-[TAUq_r] r > 0 -> r*Inv : (r'=r-1);
 endmodule
 
 
@@ -117,21 +103,16 @@ endmodule
 // Species read - dataX
 module rx
 rx : [0..N] init 0;
-// Production
-//[lspx_r] rx < N -> 1 : (rx'=rx+1);
-//[lspxp_TAUq] rx < N -> 1 : (rx'=rx+1);
-//[lspx_TAUr] rx < N -> 1 : (rx'=rx+1);
 endmodule
 
 // Species pop
 module q
 q : [0..N] init 0;
 // Reactant
-[lspxp_q] q > 0 -> q*Inv : (q'=q-1);
-//[lsp_q] q > 0 -> q*Inv : (q'=q-1);
+[lsp_q] q > 0 -> q*Inv : (q'=q-1);
 [r_q] q > 0 -> q*Inv : (q'=q-1);
 [q_r] q > 0 -> q*Inv : (q'=q-1);
-[TAUr_q] q > 0 -> q*Inv : (q'=q-1);
+[q_deg] q > 0 -> q*Inv : (q'=q-1);
 endmodule
 
 
@@ -139,9 +120,6 @@ endmodule
 module pq
 pq : [0..N] init 0;
 // Production
-//[lspxp_q] pq < N -> 1 : (pq'=pq+1);
-//[lspxp_TAUq] pq < N -> 1 : (pq'=pq+1);
-//[lspx_TAUr] pq < N -> 1 : (pq'=pq+1);
 //[lsp_q] pq < N -> 1 : (pq'=pq+1);
 endmodule
 
@@ -151,7 +129,6 @@ module TAUr
 TAUr : [0..N] init 0;
 // Reactant
 [TAUr_q] TAUr > 0 -> TAUr*Inv : (TAUr'=TAUr-1);
-[lspx_TAUr] TAUr > 1 -> TAUr*Inv : (TAUr'=TAUr-1);
 // Production
 [q_r] TAUr < N -> 1 : (TAUr'=TAUr+1);
 [TAUq_r] TAUr < N -> 1 : (TAUr'=TAUr+1);
@@ -163,7 +140,6 @@ module TAUq
 TAUq : [0..N] init 0;
 // Reactant
 [TAUq_r] TAUq > 0 -> TAUq*Inv : (TAUq'=TAUq-1);
-[lspxp_TAUq] TAUq > 0 -> TAUq*Inv : (TAUq'=TAUq-1);
 // Production
 [r_q] TAUq < N -> 1 : (TAUq'=TAUq+1);
 [TAUr_q] TAUq < N -> 1 : (TAUq'=TAUq+1);
@@ -172,14 +148,11 @@ endmodule
 
 // Reaction rates
 module reaction_rates
-[lspxp_q] lspxp*q > 0 -> k_a / Inv : true;
-[lspx_r] lspx*r> 0 -> k_bc / Inv : true;
-//[lsp_q] lsp*q > 0 -> k_bc / Inv : true;
+[lsp_q] lsp*q>0 -> k_bc / Inv : true;
 [r_q] r*q > 0 -> k_a / Inv : true;
 [q_r] r*q > 0 -> k_a / Inv : true;
-[TAUr_q] TAUr*q > 0 -> k_a / Inv : true;
-[TAUq_r] TAUq*r > 0 -> k_a / Inv : true;
-[lspxp_TAUq] lspxp*TAUq > 0 -> k_a / Inv : true;
-[lspx_TAUr] lspx*TAUr > 0 -> k_a / Inv : true;
+[TAUr_q] TAUr*q > 0 | TAUr*TAUq > 0 -> (q + TAUq/(TAUq+TAUr)*TAUq)*k_bc / Inv : true; 
+[TAUq_r] TAUq*r > 0 | TAUq*TAUr > 0 -> (r + TAUr/(TAUq+TAUr)*TAUr)*k_bc / Inv : true; 
+[q_deg] TAUr*q > 0 -> TAUr/(TAUq+TAUr)*(TAUq)*k_bc + TAUr*k_bc / Inv : true;
 endmodule
 

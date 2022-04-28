@@ -5,7 +5,7 @@ ctmc
 // Parameters for stochastic rate constants
 const double k_a = 0.2214e-5; 
 const double k_bc = 0.2214e-5; 
-const int N = 100;
+const int N = 50;
 const double Inv = 27100/N;
 
 
@@ -19,7 +19,7 @@ endmodule
 module ls
 ls : [0..N] init 0;
 //Production
-//[lsp_q] ls < N -> 1 : (ls'=ls+1);
+[lsp_q] ls < N -> 1 : (ls'=ls+1);
 //[lspx_TAUr] ls < N -> 1 : (ls'=ls+1);
 endmodule
 
@@ -33,9 +33,9 @@ endmodule
 // Species linker - start - push
 module lsp 
 lsp : [0..N] init 0;
-//[lsp_q] lsp > 0 -> lsp*Inv : (lsp'=lsp-1);
+[lsp_q] lsp > 0 -> lsp*Inv : (lsp'=lsp-1);
 // Production
-//[lspx_r] lsp < N -> 1 : (lsp'=lsp+1);
+[lspx_r] lsp < N -> 1 : (lsp'=lsp+1);
 [lspxp_TAUq] lsp < N -> 1 : (lsp'=lsp+1);
 endmodule
 
@@ -60,7 +60,6 @@ endmodule
 // Species linker - start - sigma polymer
 module lsSG
 lsSG : [0..N] init 0;
-// Production
 endmodule
 
 
@@ -104,7 +103,6 @@ r : [0..N] init 0;
 [lspx_r] r > 0 -> r*Inv : (r'=r-1);
 [r_q] r > 0 -> r*Inv : (r'=r-1);
 [q_r] r > 0 -> r*Inv : (r'=r-1);
-[TAUq_r] r > 0 -> r*Inv : (r'=r-1);
 endmodule
 
 
@@ -128,10 +126,10 @@ module q
 q : [0..N] init 0;
 // Reactant
 [lspxp_q] q > 0 -> q*Inv : (q'=q-1);
-//[lsp_q] q > 0 -> q*Inv : (q'=q-1);
+[lsp_q] q > 0 -> q*Inv : (q'=q-1);
 [r_q] q > 0 -> q*Inv : (q'=q-1);
 [q_r] q > 0 -> q*Inv : (q'=q-1);
-[TAUr_q] q > 0 -> q*Inv : (q'=q-1);
+[q_deg] q > 0 -> q*Inv : (q'=q-1);
 endmodule
 
 
@@ -174,12 +172,13 @@ endmodule
 module reaction_rates
 [lspxp_q] lspxp*q > 0 -> k_a / Inv : true;
 [lspx_r] lspx*r> 0 -> k_bc / Inv : true;
-//[lsp_q] lsp*q > 0 -> k_bc / Inv : true;
+[lsp_q] lsp*q > 0 -> k_bc / Inv : true;
 [r_q] r*q > 0 -> k_a / Inv : true;
 [q_r] r*q > 0 -> k_a / Inv : true;
-[TAUr_q] TAUr*q > 0 -> k_a / Inv : true;
-[TAUq_r] TAUq*r > 0 -> k_a / Inv : true;
+[TAUr_q] TAUr*q > 0 | TAUr*TAUq > 0 -> (q + TAUq/(TAUq+TAUr)*TAUq)*k_bc / Inv : true; 
+[TAUq_r] TAUq*r > 0 | TAUq*TAUr > 0 -> (r + TAUr/(TAUq+TAUr)*TAUr)*k_bc / Inv : true; 
 [lspxp_TAUq] lspxp*TAUq > 0 -> k_a / Inv : true;
 [lspx_TAUr] lspx*TAUr > 0 -> k_a / Inv : true;
+[q_deg] TAUr*q > 0 -> TAUr/(TAUq+TAUr)*(TAUq)*k_bc + TAUr*k_bc / Inv : true;
 endmodule
 

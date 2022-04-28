@@ -5,8 +5,7 @@ const int N = 100;
 const double Inv = 27100/N;
 // Species start
 module s
-//0.1=1 0.2=1
-s : [0..N] init 1;
+s : [0..N] init 3;
 [s_p] s > 0 -> s*Inv: (s'=s-1);	
 endmodule
 // Species linker - start

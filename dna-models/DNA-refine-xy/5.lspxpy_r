@@ -1,0 +1,107 @@
+// DNA Stack model
+
+ctmc
+
+// Parameters for stochastic rate constants
+const double k_a = 0.2214e-5; 
+const double k_bc = 0.2214e-5; 
+const int N = 100;
+const double Inv = 27100/N;
+
+
+// Species start
+module s
+s : [0..N] init 0;
+endmodule
+
+
+
+// Species linker - start
+module ls
+ls : [0..N] init 0;
+// Reactant
+endmodule
+
+
+// Species push
+module p 
+p : [0..N] init 0; 
+endmodule
+
+
+// Species linker - start - push
+module lsp 
+lsp : [0..N] init 0;
+endmodule
+
+
+// Species dataX
+module x
+x : [0..N] init 0; 
+endmodule
+
+
+// Species linker - start - push - dataX
+module lspx
+lspx : [0..N] init 0;
+endmodule
+
+
+// Species push-sigma polymer 
+module pSG 
+pSG : [0..N] init 0;
+endmodule
+
+
+// Species data-sigma polymer
+module wSG 
+wSG : [0..N] init 0;
+endmodule
+
+
+// Species linker - start - push - dataX - push
+module lspxp
+lspxp : [0..N] init 0;
+// Reactant
+[lspxp_y] lspxp > 0 -> lspxp*Inv : (lspxp'=lspxp-1);
+// Production
+[lspxpy_r] lspxp < N -> 1 : (lspxp'=lspxp+1);
+endmodule
+
+
+// Species dataX
+module y
+y : [0..N] init 0; 
+// Reactant
+[r_y] y > 0 -> y*Inv : (y'=y-1);
+[lspxp_y] y > 0 -> y*Inv : (y'=y-1);
+endmodule
+
+
+
+// Species linker - start - push - dataX - push - dataY
+module lspxpy
+lspxpy : [0..N] init 0;
+// Reactant
+[lspxpy_r] lspxpy > 0 -> lspxpy*Inv : (lspxpy'=lspxpy-1);
+// Production
+[lspxp_y] lspxpy < N -> 1 : (lspxpy'=lspxpy+1);
+endmodule
+ 
+
+// Species read
+module r
+r : [0..N] init 0;
+// Reactant
+[r_y] r > 0 -> r*Inv : (r'=r-1);
+[lspxpy_r] r > 0 -> r*Inv : (r'=r-1);
+endmodule
+
+
+// Reaction rates
+module reaction_rates
+[lspxpy_r] lspxpy*r > 0 -> k_a / Inv : true;
+[r_y] r*y > 0 -> k_a / Inv : true;
+[lspxp_y] lspxp*y>0 -> k_bc / Inv : true;
+endmodule
+

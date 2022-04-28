@@ -26,10 +26,10 @@ endmodule
 module p 
 p : [0..N] init 0; 
 // Reactant
-[lspxpy_p] p > 0 -> p*Inv : (p'=p-1);
 [p_y] p > 0 -> p*Inv : (p'=p-1);
 [y_p] p > 0 -> p*Inv : (p'=p-1);
 [wSG_p] p > 0 -> p*Inv : (p'=p-1);
+[p_deg] p > 0 -> p*Inv : (p'=p-1);
 endmodule
 
 
@@ -51,24 +51,12 @@ lspx : [0..N] init 0;
 endmodule
 
 
-// Species linker - start - sigma polymer
-module lsSG
-lsSG : [0..N] init 0;
-// Reactant
-//[lsSG_y]  lsSG > 0 -> lsSG*Inv : (lsSG'=lsSG-1);
-// Production
-//[lspxpy_p] lsSG < N -> 1 : (lsSG'=lsSG+1);
-//[lspxp_wSG] lsSG < N -> 1 : (lsSG'=lsSG+1);
-//[lspxpy_pSG] lsSG < N -> 1 : (lsSG'=lsSG+1);
-endmodule
-
-
 // Species push-sigma polymer 
 module pSG 
 pSG : [0..N] init 0;
 // Reactant
 [pSG_y] pSG > 0 -> pSG*Inv : (pSG'=pSG-1);
-[lspxpy_pSG] pSG > 0 -> pSG*Inv : (pSG'=pSG-1);
+[pSG_deg] pSG > 0 -> pSG*Inv : (pSG'=pSG-1);
 // Production
 [p_y] pSG < N -> 1 : (pSG'=pSG+1);
 [wSG_p] pSG < N -> 1 : (pSG'=pSG+1);
@@ -80,7 +68,7 @@ module wSG
 wSG : [0..N] init 0;
 // Reactant
 [wSG_p] wSG > 0 -> wSG*Inv : (wSG'=wSG-1);
-[lspxp_wSG]  wSG > 0 -> wSG*Inv : (wSG'=wSG-1);	
+[wSG_deg] wSG > 0 -> wSG*Inv : (wSG'=wSG-1);	
 // Production
 [y_p] wSG < N -> 1 : (wSG'=wSG+1);
 [pSG_y] wSG < N -> 1 : (wSG'=wSG+1);
@@ -92,7 +80,7 @@ module lspxp
 lspxp : [0..N] init 0;
 // Reactant
 [lspxp_y] lspxp > 0 -> lspxp*Inv : (lspxp'=lspxp-1);
-[lspxp_wSG] lspxp > 0 -> lspxp*Inv : (lspxp'=lspxp-1);
+[lspxp_deg] lspxp > 0 -> lspxp*Inv : (lspxp'=lspxp-1);
 endmodule
 
 
@@ -104,6 +92,7 @@ y : [0..N] init 0;
 [p_y] y > 0 -> y*Inv : (y'=y-1);
 [y_p] y > 0 -> y*Inv : (y'=y-1);
 [pSG_y] y > 0 -> y*Inv : (y'=y-1);
+//[y_deg]  y > 0 -> y*Inv : (y'=y-1);
 endmodule
 
 
@@ -111,8 +100,7 @@ endmodule
 module lspxpy
 lspxpy : [0..N] init 0;
 // Reactant
-[lspxpy_p] lspxpy > 0 -> lspxpy*Inv : (lspxpy'=lspxpy-1);
-[lspxpy_pSG] lspxpy > 0 -> lspxpy*Inv : (lspxpy'=lspxpy-1);
+[lspxpy_deg] lspxpy > 0 -> lspxpy*Inv : (lspxpy'=lspxpy-1);
 // Production
 [lspxp_y] lspxpy < N -> 1 : (lspxpy'=lspxpy+1);
 endmodule
@@ -121,12 +109,16 @@ endmodule
 // Reaction rates
 module reaction_rates
 [lspxp_y] lspxp*y > 0 -> k_a / Inv : true;
-[lspxpy_p] lspxpy*p>0 -> k_bc / Inv : true;
 [y_p] y*p > 0 -> k_a / Inv : true;
 [p_y] y*p > 0 -> k_a / Inv : true;
-[wSG_p] wSG*p > 0 -> k_bc / Inv : true; 
-[pSG_y] pSG*y > 0 -> k_bc / Inv : true; 
-[lspxp_wSG] lspxp*wSG > 0 -> k_bc / Inv : true;
-[lspxpy_pSG] lspxpy*pSG > 0 -> k_bc / Inv : true;
+[wSG_p] wSG*p > 0 | pSG*wSG > 0-> (p + pSG/(wSG+pSG)*pSG)*k_bc / Inv : true; 
+[pSG_y] pSG*y > 0 | pSG*wSG > 0 -> (y + wSG/(wSG+pSG)*wSG)*k_bc / Inv : true; 
+
+[lspxp_deg] lspxp*wSG > 0 -> wSG*k_bc / Inv : true;
+[lspxpy_deg] lspxpy*pSG > 0 | lspxpy*p>0 -> (p+pSG)*k_bc / Inv : true;
+//[y_deg] pSG*y > 0 -> (pSG/(wSG+pSG)*wSG + pSG)*k_bc / Inv : true;
+[wSG_deg] pSG*wSG > 0 | lspxp*wSG>0 -> ((pSG/(wSG+pSG)*(wSG + pSG))*k_bc+lspxp*k_bc) / Inv : true;
+[pSG_deg] wSG*pSG > 0| lspxpy*pSG>0 -> ((wSG/(wSG+pSG)*(pSG + wSG))*k_bc+lspxpy*k_bc) / Inv : true;
+[p_deg] wSG*p > 0 | lspxpy*p>0 -> (wSG/(wSG+pSG)*(pSG) + wSG + lspxpy)*k_bc/ Inv : true;
 endmodule
 

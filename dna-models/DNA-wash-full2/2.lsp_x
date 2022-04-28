@@ -5,7 +5,7 @@ ctmc
 // Parameters for stochastic rate constants
 const double k_a = 0.2214e-5; 
 const double k_bc = 0.2214e-5; 
-const int N = 100;
+const int N = 50;
 const double Inv = 27100/N;
 
 // Species start
@@ -24,10 +24,8 @@ endmodule
 module p 
 p : [0..N] init 0; 
 // Reactant
-[lspx_p] p > 0 -> p*Inv: (p'=p-1);
 [p_x] p > 0 -> p*Inv : (p'=p-1);
 [x_p] p > 0 -> p*Inv : (p'=p-1);
-[wSG_p] p > 0 -> p*Inv : (p'=p-1);
 endmodule
 
 
@@ -47,7 +45,7 @@ x : [0..N] init 0;
 [p_x] x > 0 -> x*Inv : (x'=x-1);
 [x_p] x > 0 -> x*Inv : (x'=x-1);
 [lsp_x] x > 0 -> x*Inv : (x'=x-1);
-[pSG_x] x > 0 -> x*Inv : (x'=x-1);
+[x_deg]  x > 0 -> x*Inv : (x'=x-1);
 endmodule
 
 
@@ -55,22 +53,9 @@ endmodule
 module lspx
 lspx : [0..N] init 0;
 // Reactant
-[lspx_p] lspx > 0 -> lspx*Inv : (lspx'=lspx-1);
 [lspx_pSG] lspx > 0 -> lspx*Inv : (lspx'=lspx-1);
 // Production
 [lsp_x] lspx < N -> 1 : (lspx'=lspx+1);
-endmodule
-
-
-// Species linker - start - push - dataX -push
-module lsSG
-lsSG : [0..N] init 0;
-// Reactant
-//[lsSG_x] lsSG > 0 -> lsSG*Inv : (lsSG'=lsSG-1);
-// Production
-//[lspx_p] lsSG < N -> 1 : (lsSG'=lsSG+1);
-//[lspx_pSG] lsSG < N -> 1 : (lsSG'=lsSG+1);
-//[lsp_wSG] lsSG < N -> 1 : (lsSG'=lsSG+1);
 endmodule
 
 
@@ -100,11 +85,11 @@ endmodule
 // Reaction rates
 module reaction_rates
 [lsp_x] lsp*x > 0 -> k_bc / Inv : true;
-[lspx_p] lspx*p > 0 -> k_a / Inv : true;
 [p_x] x*p > 0 -> k_a / Inv : true;
 [x_p] x*p > 0 -> k_a / Inv : true;
-[wSG_p] wSG*p > 0 -> k_bc / Inv : true; 
-[pSG_x] pSG*x > 0 -> k_bc / Inv : true; 
+[wSG_p] wSG*p > 0 | pSG*wSG > 0-> (p + pSG/(wSG+pSG)*pSG)*k_bc / Inv : true; 
+[pSG_x] pSG*x > 0 | pSG*wSG > 0 -> (x + wSG/(wSG+pSG)*wSG)*k_bc / Inv : true; 
 [lspx_pSG] lspx*pSG > 0 -> k_bc / Inv : true;
 [lsp_wSG] lsp*wSG > 0 -> k_bc / Inv : true;
+[x_deg] wSG*pSG*x > 0 | pSG*lsSG*x > 0 | pSG*x > 0 -> pSG/(wSG+pSG)*(wSG + lsSG)*k_bc + pSG*k_bc / Inv : true;
 endmodule
