@@ -1,5 +1,5 @@
 .. mcSTACK documentation master file, created by
-   sphinx-quickstart on Tue Dec  3 23:45:57 2024.
+   sphinx-quickstart on Wed Dec  4 00:16:19 2024.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
